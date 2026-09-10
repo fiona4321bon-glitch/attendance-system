@@ -807,3 +807,235 @@ async function saveAttendance() {
     alert("出缺勤已儲存");
 
 }
+/* =====================================
+   批次匯入學生
+===================================== */
+
+async function batchImportStudents() {
+
+    const classID =
+        document
+            .getElementById("studentClass")
+            .value;
+
+
+    const rawData =
+        document
+            .getElementById("batchStudentData")
+            .value
+            .trim();
+
+
+    if (!classID) {
+
+        alert("請先選擇班級");
+
+        return;
+
+    }
+
+
+    if (!rawData) {
+
+        alert("請先貼上學生資料");
+
+        return;
+
+    }
+
+
+    const lines =
+        rawData
+            .split(/\r?\n/)
+            .filter(line => line.trim() !== "");
+
+
+    const students = [];
+
+    const errors = [];
+
+
+    lines.forEach((line, index) => {
+
+        const text =
+            line.trim();
+
+
+        /* 跳過標題列 */
+
+        if (
+            text.includes("座號") &&
+            text.includes("姓名")
+        ) {
+
+            return;
+
+        }
+
+
+        /*
+           優先判斷：
+           Tab
+           半形逗號
+           全形逗號
+        */
+
+        let parts =
+            text.split(/\t|,|，/);
+
+
+        /*
+           如果沒有 Tab 或逗號，
+           再用空白分隔
+        */
+
+        if (parts.length < 2) {
+
+            parts =
+                text.split(/\s+/);
+
+        }
+
+
+        const seatNo =
+            Number(
+                parts[0]
+                    .trim()
+            );
+
+
+        const name =
+            parts
+                .slice(1)
+                .join(" ")
+                .trim();
+
+
+        if (
+            !seatNo ||
+            !name
+        ) {
+
+            errors.push(
+                `第 ${index + 1} 行格式錯誤：${line}`
+            );
+
+            return;
+
+        }
+
+
+        students.push({
+
+            class_id:
+                classID,
+
+            seat_no:
+                seatNo,
+
+            name:
+                name,
+
+            active:
+                true
+
+        });
+
+    });
+
+
+    if (students.length === 0) {
+
+        alert(
+            "沒有可以匯入的學生資料"
+        );
+
+        return;
+
+    }
+
+
+    if (errors.length > 0) {
+
+        const continueImport =
+            confirm(
+
+                "發現部分資料格式有問題：\n\n" +
+
+                errors.join("\n") +
+
+                "\n\n仍要匯入其他正確資料嗎？"
+
+            );
+
+
+        if (!continueImport) {
+
+            return;
+
+        }
+
+    }
+
+
+    const check =
+        confirm(
+
+            `準備匯入 ${students.length} 位學生。\n\n` +
+
+            "如果相同班級已有相同座號，將更新學生姓名。\n\n" +
+
+            "確定繼續嗎？"
+
+        );
+
+
+    if (!check) {
+
+        return;
+
+    }
+
+
+    const { error } =
+        await supabaseClient
+            .from("students")
+            .upsert(
+                students,
+                {
+
+                    onConflict:
+                        "class_id,seat_no"
+
+                }
+            );
+
+
+    if (error) {
+
+        alert(
+            "匯入失敗：" +
+            error.message
+        );
+
+        return;
+
+    }
+
+
+    alert(
+        `成功匯入 ${students.length} 位學生`
+    );
+
+
+    document
+        .getElementById("batchStudentData")
+        .value = "";
+
+
+    await loadStudents();
+
+
+    await loadAttendanceStudents();
+
+}
