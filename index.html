@@ -2,280 +2,630 @@
 <html lang="zh-Hant">
 
 <head>
+
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>學生出缺勤管理系統</title>
+    <title>
+        學生出缺勤管理系統
+    </title>
 
-    <link rel="stylesheet"
-          href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 
 <body>
 
-    <!-- 登入畫面 -->
-    <section id="loginPage">
 
-        <div class="login-box">
+<!-- =====================================================
+     登入頁
+===================================================== -->
 
-            <h1>學生出缺勤管理系統</h1>
+<section id="loginPage">
 
-            <p>教師登入</p>
+    <div class="login-box">
 
-            <input
-                type="email"
-                id="email"
-                placeholder="電子郵件">
+        <h1>
+            學生出缺勤管理系統
+        </h1>
 
-            <input
-                type="password"
-                id="password"
-                placeholder="密碼">
+        <p>
+            教師登入
+        </p>
 
-            <button onclick="login()">
+
+        <input
+            type="email"
+            id="email"
+            placeholder="電子郵件"
+        >
+
+
+        <input
+            type="password"
+            id="password"
+            placeholder="密碼"
+        >
+
+
+        <div class="login-buttons">
+
+            <button
+                onclick="login()"
+            >
                 登入
             </button>
 
+
             <button
                 class="secondary"
-                onclick="register()">
+                onclick="register()"
+            >
                 第一次使用／建立帳號
             </button>
 
-            <p id="loginMessage"></p>
+        </div>
+
+
+        <p id="loginMessage"></p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     主系統
+===================================================== -->
+
+<section
+    id="appPage"
+    style="display:none;"
+>
+
+
+    <!-- 頁首 -->
+
+    <header>
+
+        <div>
+
+            <h1>
+                學生出缺勤管理
+            </h1>
+
+            <span id="userEmail"></span>
 
         </div>
 
-    </section>
+
+        <button
+            onclick="logout()"
+        >
+            登出
+        </button>
+
+    </header>
 
 
-    <!-- 系統主畫面 -->
-    <section
-        id="appPage"
-        style="display:none;">
 
-        <header>
+    <!-- =================================================
+         主選單
+    ================================================= -->
 
-            <div>
+    <nav>
 
-                <h1>學生出缺勤管理</h1>
-
-                <span id="userEmail"></span>
-
-            </div>
-
-            <button onclick="logout()">
-                登出
-            </button>
-
-        </header>
+        <button
+            onclick="showPage('attendancePage')"
+        >
+            今日點名
+        </button>
 
 
-        <!-- 功能選單 -->
-
-        <nav>
-
-    <button onclick="showPage('attendancePage')">
-        今日點名
-    </button>
-
-    <button onclick="showPage('recordPage')">
-        紀錄查詢
-    </button>
-
-    <button onclick="showPage('classPage')">
-        班級管理
-    </button>
-
-    <button onclick="showPage('studentPage')">
-        學生管理
-    </button>
+        <button
+            onclick="showPage('recordPage')"
+        >
+            紀錄查詢
+        </button>
 
 
-        </nav>
+        <button
+            onclick="showPage('classPage')"
+        >
+            班級管理
+        </button>
 
 
-        <!-- 每日點名 -->
+        <button
+            onclick="showPage('studentPage')"
+        >
+            學生管理
+        </button>
 
-        <main id="attendancePage"
-              class="page">
+    </nav>
 
-            <h2>今日點名</h2>
+
+
+    <!-- =================================================
+         今日點名
+    ================================================= -->
+
+    <main
+        id="attendancePage"
+        class="page"
+    >
+
+        <h2>
+            今日點名
+        </h2>
+
+
+        <div class="card">
 
             <div class="toolbar">
 
                 <label>
+
                     日期
+
+                    <input
+                        type="date"
+                        id="attendanceDate"
+                    >
+
                 </label>
 
-                <input
-                    type="date"
-                    id="attendanceDate">
 
                 <label>
+
                     班級
+
+                    <select
+                        id="attendanceClass"
+                        onchange="loadAttendanceStudents()"
+                    >
+                    </select>
+
                 </label>
 
-                <select
-                    id="attendanceClass"
-                    onchange="loadAttendanceStudents()">
-                </select>
+            </div>
+
+        </div>
+
+
+
+        <div
+            id="attendanceSummary"
+            class="summary-block"
+        >
+        </div>
+
+
+
+        <div id="attendanceList">
+        </div>
+
+
+
+        <button
+            class="save-button"
+            onclick="saveAttendance()"
+        >
+            儲存出缺勤
+        </button>
+
+    </main>
+
+
+
+    <!-- =================================================
+         紀錄查詢
+    ================================================= -->
+
+    <main
+        id="recordPage"
+        class="page"
+        style="display:none;"
+    >
+
+        <h2>
+            出缺勤紀錄查詢
+        </h2>
+
+
+
+        <!-- 班級 -->
+
+        <div class="card">
+
+            <h3>
+                選擇班級
+            </h3>
+
+
+            <div class="toolbar">
+
+                <label>
+
+                    班級
+
+                    <select
+                        id="recordClass"
+                        onchange="loadRecordStudents()"
+                    >
+                    </select>
+
+                </label>
 
             </div>
 
-            <div id="attendanceSummary">
+        </div>
+
+
+
+        <!-- =================================================
+             某日紀錄
+        ================================================= -->
+
+        <div class="card">
+
+            <h3>
+                某日出缺勤紀錄
+            </h3>
+
+
+            <div class="toolbar">
+
+                <label>
+
+                    日期
+
+                    <input
+                        type="date"
+                        id="recordDate"
+                    >
+
+                </label>
+
+
+                <button
+                    onclick="loadDateRecords()"
+                >
+                    查詢當日紀錄
+                </button>
+
             </div>
 
-            <div id="attendanceList">
+
+            <div
+                id="dateRecordList"
+                class="record-result"
+            >
+
+                <p>
+                    請選擇日期後查詢。
+                </p>
+
             </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             個別學生紀錄
+        ================================================= -->
+
+        <div class="card">
+
+            <h3>
+                個別學生紀錄
+            </h3>
+
+
+            <div class="toolbar">
+
+                <label>
+
+                    學生
+
+                    <select id="recordStudent">
+                    </select>
+
+                </label>
+
+
+                <button
+                    onclick="loadStudentHistory()"
+                >
+                    查詢學生紀錄
+                </button>
+
+            </div>
+
+
+            <div
+                id="studentHistoryList"
+                class="record-result"
+            >
+
+                <p>
+                    請選擇學生。
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             班級統計
+        ================================================= -->
+
+        <div class="card">
+
+            <h3>
+                班級出缺勤統計
+            </h3>
+
 
             <button
-                class="save-button"
-                onclick="saveAttendance()">
-
-                儲存出缺勤
-
+                onclick="loadClassSummary()"
+            >
+                更新班級統計
             </button>
 
-        </main>
+
+            <div
+                id="classSummary"
+                class="record-result"
+            >
+
+                <p>
+                    尚未載入統計資料。
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
 
 
-        <!-- 班級管理 -->
 
-        <main
-            id="classPage"
-            class="page"
-            style="display:none;">
+    <!-- =================================================
+         班級管理
+    ================================================= -->
 
-            <h2>班級管理</h2>
+    <main
+        id="classPage"
+        class="page"
+        style="display:none;"
+    >
 
-            <div class="card">
+        <h2>
+            班級管理
+        </h2>
 
-                <h3>新增班級</h3>
+
+
+        <div class="card">
+
+            <h3>
+                新增班級
+            </h3>
+
+
+            <div class="toolbar">
 
                 <input
                     id="schoolYear"
-                    placeholder="學年度，例如 115">
+                    placeholder="學年度，例如 115"
+                >
+
 
                 <input
                     id="className"
-                    placeholder="班級，例如 401">
+                    placeholder="班級，例如 401"
+                >
 
-                <button onclick="addClass()">
+
+                <button
+                    onclick="addClass()"
+                >
                     新增班級
                 </button>
 
             </div>
 
-            <div class="card">
+        </div>
 
-                <h3>目前班級</h3>
 
-                <div id="classList">
-                </div>
 
+        <div class="card">
+
+            <h3>
+                目前班級
+            </h3>
+
+            <div id="classList">
             </div>
 
-        </main>
+        </div>
+
+    </main>
 
 
-        <!-- 學生管理 -->
 
-        <main
-            id="studentPage"
-            class="page"
-            style="display:none;">
+    <!-- =================================================
+         學生管理
+    ================================================= -->
 
-            <h2>學生管理</h2>
+    <main
+        id="studentPage"
+        class="page"
+        style="display:none;"
+    >
 
-            <div class="card">
-
-                <label>
-                    班級
-                </label>
-
-                <select
-                    id="studentClass"
-                    onchange="loadStudents()">
-                </select>
-
-            </div>
+        <h2>
+            學生管理
+        </h2>
 
 
-            <div class="card">
 
-                <h3>新增學生</h3>
-<div class="card">
+        <!-- 選擇班級 -->
 
-    <h3>批次匯入學生</h3>
+        <div class="card">
 
-    <p>
-        可直接從 Google 試算表複製「座號、姓名」兩欄後貼上。
-    </p>
+            <h3>
+                選擇班級
+            </h3>
 
-    <textarea
-        id="batchStudentData"
-        rows="10"
-        style="width:100%; padding:12px;"
-        placeholder="例如：
+
+            <select
+                id="studentClass"
+                onchange="loadStudents()"
+            >
+            </select>
+
+        </div>
+
+
+
+        <!-- =================================================
+             批次匯入
+        ================================================= -->
+
+        <div class="card">
+
+            <h3>
+                批次匯入學生
+            </h3>
+
+
+            <p>
+                可直接從 Google 試算表複製「座號、姓名」兩欄後貼上。
+            </p>
+
+
+            <textarea
+                id="batchStudentData"
+                rows="10"
+                placeholder="例如：
 1	王小明
 2	李小華
-3	陳小美">
-    </textarea>
+3	陳小美"
+            ></textarea>
 
-    <br><br>
 
-    <button onclick="batchImportStudents()">
-        批次匯入學生
-    </button>
+            <button
+                onclick="batchImportStudents()"
+            >
+                批次匯入學生
+            </button>
 
-</div>
+        </div>
+
+
+
+        <!-- =================================================
+             新增單一學生
+        ================================================= -->
+
+        <div class="card">
+
+            <h3>
+                新增學生
+            </h3>
+
+
+            <div class="toolbar">
+
                 <input
                     type="number"
                     id="seatNo"
-                    placeholder="座號">
+                    min="1"
+                    placeholder="座號"
+                >
+
 
                 <input
                     id="studentName"
-                    placeholder="學生姓名">
+                    placeholder="學生姓名"
+                >
 
-                <button onclick="addStudent()">
+
+                <button
+                    onclick="addStudent()"
+                >
                     新增學生
                 </button>
 
             </div>
 
+        </div>
 
-            <div class="card">
 
-                <h3>學生名單</h3>
 
-                <div id="studentList">
-                </div>
+        <!-- =================================================
+             學生名單
+        ================================================= -->
+
+        <div class="card">
+
+            <h3>
+                學生名單
+            </h3>
+
+
+            <div id="studentList">
+
+                <p>
+                    目前尚未建立學生。
+                </p>
 
             </div>
 
-        </main>
+        </div>
 
-    </section>
+    </main>
 
-
-    <!-- Supabase -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</section>
 
 
-    <!-- 我們自己的程式 -->
 
-    <script src="js/config.js"></script>
+<!-- =====================================================
+     Supabase
+===================================================== -->
 
-    <script src="js/supabase.js"></script>
+<script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
 
-    <script src="js/auth.js"></script>
 
-    <script src="js/app.js"></script>
+
+<!-- =====================================================
+     自己的程式
+===================================================== -->
+
+<script src="js/config.js"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/auth.js"></script>
+
+<script src="js/app.js"></script>
+
 
 </body>
 
