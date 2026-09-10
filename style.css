@@ -1,6 +1,11 @@
+/* =========================================================
+   基本設定
+========================================================= */
+
 * {
     box-sizing: border-box;
 }
+
 
 body {
 
@@ -13,11 +18,15 @@ body {
 
     background: #f5f6fa;
 
-    color: #333;
+    color: #252525;
+
 }
 
 
-/* 登入 */
+
+/* =========================================================
+   登入
+========================================================= */
 
 #loginPage {
 
@@ -29,6 +38,8 @@ body {
 
     align-items: center;
 
+    padding: 20px;
+
 }
 
 
@@ -36,37 +47,62 @@ body {
 
     background: white;
 
-    width: 360px;
+    width: 450px;
 
-    padding: 35px;
+    max-width: 100%;
 
-    border-radius: 16px;
+    padding: 42px;
+
+    border-radius: 20px;
 
     box-shadow:
-        0 6px 25px
-        rgba(0,0,0,0.1);
+        0 8px 30px
+        rgba(0, 0, 0, 0.08);
+
+}
+
+
+.login-box h1 {
+
+    margin-top: 0;
 
 }
 
 
 .login-box input {
 
+    display: block;
+
     width: 100%;
 
-    padding: 12px;
+    padding: 14px;
 
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 
 }
 
 
-/* HEADER */
+.login-buttons {
+
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+}
+
+
+
+/* =========================================================
+   頁首
+========================================================= */
 
 header {
 
     background: white;
 
-    padding: 15px 25px;
+    padding: 20px 32px;
 
     display: flex;
 
@@ -74,92 +110,185 @@ header {
 
     align-items: center;
 
-    box-shadow:
-        0 2px 10px
-        rgba(0,0,0,0.08);
+    border-bottom:
+        1px solid #eeeeee;
 
 }
 
 
 header h1 {
 
-    margin: 0;
+    margin: 0 0 4px 0;
+
+    font-size: 32px;
 
 }
 
 
-/* 功能列 */
+#userEmail {
+
+    color: #555;
+
+}
+
+
+
+/* =========================================================
+   選單
+========================================================= */
 
 nav {
 
     display: flex;
 
-    gap: 10px;
+    gap: 12px;
 
-    padding: 15px;
+    padding: 18px 20px;
 
     background: white;
 
-    border-top: 1px solid #eee;
+    border-bottom:
+        1px solid #eeeeee;
+
+    overflow-x: auto;
 
 }
 
 
-/* 主頁 */
+
+/* =========================================================
+   主要頁面
+========================================================= */
 
 main {
 
-    max-width: 1100px;
+    max-width: 1200px;
 
     margin: auto;
 
-    padding: 20px;
+    padding: 28px 26px 60px;
 
 }
 
 
-/* 卡片 */
+main h2 {
+
+    font-size: 30px;
+
+    margin-top: 10px;
+
+}
+
+
+
+/* =========================================================
+   卡片
+========================================================= */
 
 .card {
 
     background: white;
 
-    padding: 20px;
+    padding: 26px;
 
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 
-    border-radius: 14px;
+    border-radius: 18px;
+
+    box-shadow:
+        0 3px 14px
+        rgba(0, 0, 0, 0.035);
 
 }
 
 
-/* INPUT */
+.card h3 {
+
+    margin-top: 0;
+
+    font-size: 23px;
+
+}
+
+
+
+/* =========================================================
+   表單
+========================================================= */
+
+.toolbar {
+
+    display: flex;
+
+    align-items: end;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+}
+
+
+label {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+    font-weight: 600;
+
+}
+
 
 input,
-select {
+select,
+textarea {
 
-    padding: 10px;
+    font: inherit;
 
-    margin: 5px;
+    padding: 11px 13px;
 
     border:
+        1px solid #d8dce5;
 
-        1px solid #ddd;
+    border-radius: 9px;
 
-    border-radius: 8px;
+    background: white;
 
 }
 
 
-/* BUTTON */
+textarea {
+
+    width: 100%;
+
+    min-height: 180px;
+
+    resize: vertical;
+
+    display: block;
+
+    margin: 12px 0 16px;
+
+}
+
+
+
+/* =========================================================
+   按鈕
+========================================================= */
 
 button {
 
-    padding: 10px 16px;
+    font: inherit;
+
+    padding: 11px 17px;
 
     border: 0;
 
-    border-radius: 8px;
+    border-radius: 9px;
 
     background: #2563eb;
 
@@ -167,12 +296,14 @@ button {
 
     cursor: pointer;
 
+    font-weight: 700;
+
 }
 
 
 button:hover {
 
-    opacity: 0.85;
+    opacity: 0.88;
 
 }
 
@@ -184,33 +315,42 @@ button:hover {
 }
 
 
-/* 每位學生 */
+
+/* =========================================================
+   學生
+========================================================= */
 
 .student-row {
 
     background: white;
 
-    border-radius: 12px;
+    border-radius: 14px;
 
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 
-    padding: 12px;
+    padding: 16px;
+
+    border:
+        1px solid #edf0f5;
 
 }
 
 
 .student-title {
 
-    font-size: 18px;
+    font-size: 19px;
 
-    font-weight: bold;
+    font-weight: 800;
 
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 
 }
 
 
-/* 點名按鈕 */
+
+/* =========================================================
+   點名按鈕
+========================================================= */
 
 .status-buttons {
 
@@ -218,14 +358,14 @@ button:hover {
 
     flex-wrap: wrap;
 
-    gap: 6px;
+    gap: 7px;
 
 }
 
 
 .status-button {
 
-    background: #e5e7eb;
+    background: #e8ebf0;
 
     color: #333;
 
@@ -241,48 +381,275 @@ button:hover {
 }
 
 
-/* 儲存 */
+
+/* =========================================================
+   點名額外資料
+========================================================= */
+
+.attendance-extra {
+
+    margin-top: 14px;
+
+    display: grid;
+
+    grid-template-columns:
+        160px
+        160px
+        minmax(220px, 1fr);
+
+    gap: 10px;
+
+}
+
+
+.attendance-extra input {
+
+    width: 100%;
+
+}
+
+
+
+/* =========================================================
+   今日統計
+========================================================= */
+
+.summary-block {
+
+    margin: 15px 0 20px;
+
+}
+
+
+.summary-chip {
+
+    display: inline-block;
+
+    padding: 8px 12px;
+
+    margin:
+        0 7px 8px 0;
+
+    background: white;
+
+    border-radius: 10px;
+
+    border:
+        1px solid #e4e7ed;
+
+}
+
+
+
+/* =========================================================
+   儲存按鈕
+========================================================= */
 
 .save-button {
 
     width: 100%;
 
-    padding: 15px;
+    padding: 17px;
 
-    font-size: 18px;
+    font-size: 20px;
 
     margin-top: 20px;
 
 }
 
 
-/* 手機 */
 
-@media(max-width:600px) {
+/* =========================================================
+   紀錄結果
+========================================================= */
+
+.record-result {
+
+    margin-top: 20px;
+
+}
+
+
+
+/* =========================================================
+   表格
+========================================================= */
+
+.table-wrapper {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    margin-top: 15px;
+
+}
+
+
+.record-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    min-width: 720px;
+
+    background: white;
+
+}
+
+
+.record-table th,
+.record-table td {
+
+    padding: 11px 10px;
+
+    border-bottom:
+        1px solid #e7e9ee;
+
+    text-align: center;
+
+}
+
+
+.record-table th {
+
+    background: #f3f5f9;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+
+}
+
+
+.record-table tbody tr:hover {
+
+    background: #fafbfc;
+
+}
+
+
+
+/* =========================================================
+   手機
+========================================================= */
+
+@media(max-width: 700px) {
 
     header {
 
-        padding: 10px;
+        padding: 14px 16px;
 
     }
+
+
+    header h1 {
+
+        font-size: 24px;
+
+    }
+
 
     nav {
 
-        overflow-x: auto;
+        padding: 12px;
 
     }
+
+
+    nav button {
+
+        white-space: nowrap;
+
+    }
+
 
     main {
 
-        padding: 10px;
+        padding:
+            18px
+            12px
+            50px;
 
     }
 
+
+    main h2 {
+
+        font-size: 26px;
+
+    }
+
+
+    .card {
+
+        padding: 18px;
+
+    }
+
+
+    .toolbar {
+
+        display: block;
+
+    }
+
+
+    .toolbar label,
+    .toolbar input,
+    .toolbar select,
+    .toolbar button {
+
+        width: 100%;
+
+        margin-bottom: 9px;
+
+    }
+
+
+    .status-buttons {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                4,
+                1fr
+            );
+
+    }
+
+
     .status-button {
 
-        flex: 1;
+        padding:
+            10px
+            5px;
 
-        min-width: 65px;
+    }
+
+
+    .attendance-extra {
+
+        grid-template-columns:
+            1fr
+            1fr;
+
+    }
+
+
+    .note-field {
+
+        grid-column:
+            1 / -1;
+
+    }
+
+
+    .login-box {
+
+        padding: 28px 22px;
 
     }
 
