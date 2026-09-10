@@ -4,23 +4,29 @@
 ========================================================= */
 
 
-/* =========================================================
-   全域資料
-========================================================= */
-
 let classes = [];
 
 let currentAttendance = [];
 
+
 const statuses = [
+
     "到校",
+
     "遲到",
+
     "病假",
+
     "事假",
+
     "公假",
+
     "曠課",
+
     "早退"
+
 ];
+
 
 
 /* =========================================================
@@ -38,23 +44,24 @@ async function startApp() {
 }
 
 
+
 /* =========================================================
-   系統事件
+   基本事件
 ========================================================= */
 
 function setupEvents() {
 
-    const dateInput =
+    const attendanceDate =
         document.getElementById(
             "attendanceDate"
         );
 
 
-    if (dateInput) {
+    if (attendanceDate) {
 
-        dateInput.addEventListener(
+        attendanceDate.addEventListener(
             "change",
-            async function () {
+            async () => {
 
                 await loadAttendanceStudents();
 
@@ -66,8 +73,9 @@ function setupEvents() {
 }
 
 
+
 /* =========================================================
-   設定今天日期
+   今天日期
 ========================================================= */
 
 function setToday() {
@@ -102,15 +110,29 @@ function setToday() {
         `${year}-${month}-${day}`;
 
 
-    const input =
+    const attendanceDate =
         document.getElementById(
             "attendanceDate"
         );
 
 
-    if (input) {
+    const recordDate =
+        document.getElementById(
+            "recordDate"
+        );
 
-        input.value =
+
+    if (attendanceDate) {
+
+        attendanceDate.value =
+            today;
+
+    }
+
+
+    if (recordDate) {
+
+        recordDate.value =
             today;
 
     }
@@ -118,11 +140,14 @@ function setToday() {
 }
 
 
+
 /* =========================================================
    切換頁面
 ========================================================= */
 
-function showPage(pageID) {
+async function showPage(
+    pageID
+) {
 
     document
         .querySelectorAll(
@@ -157,7 +182,7 @@ function showPage(pageID) {
         "classPage"
     ) {
 
-        loadClasses();
+        await loadClasses();
 
     }
 
@@ -167,7 +192,7 @@ function showPage(pageID) {
         "studentPage"
     ) {
 
-        loadStudents();
+        await loadStudents();
 
     }
 
@@ -177,11 +202,22 @@ function showPage(pageID) {
         "attendancePage"
     ) {
 
-        loadAttendanceStudents();
+        await loadAttendanceStudents();
+
+    }
+
+
+    if (
+        pageID ===
+        "recordPage"
+    ) {
+
+        await loadRecordStudents();
 
     }
 
 }
+
 
 
 /* =========================================================
@@ -209,14 +245,22 @@ async function addClass() {
 
     const schoolYear =
         schoolYearInput
-            ? schoolYearInput.value.trim()
-            : "";
+            ?
+        schoolYearInput
+            .value
+            .trim()
+            :
+        "";
 
 
     const className =
         classNameInput
-            ? classNameInput.value.trim()
-            : "";
+            ?
+        classNameInput
+            .value
+            .trim()
+            :
+        "";
 
 
     if (
@@ -267,8 +311,11 @@ async function addClass() {
         else {
 
             alert(
+
                 "新增班級失敗：\n" +
+
                 error.message
+
             );
 
         }
@@ -279,12 +326,8 @@ async function addClass() {
     }
 
 
-    if (classNameInput) {
-
-        classNameInput.value =
-            "";
-
-    }
+    classNameInput.value =
+        "";
 
 
     alert(
@@ -297,8 +340,9 @@ async function addClass() {
 }
 
 
+
 /* -------------------------
-   讀取班級
+   載入班級
 ------------------------- */
 
 async function loadClasses() {
@@ -337,7 +381,6 @@ async function loadClasses() {
             error
         );
 
-
         return;
 
     }
@@ -349,13 +392,15 @@ async function loadClasses() {
 
     renderClassList();
 
-    renderClassSelects();
+
+    await renderClassSelects();
 
 }
 
 
+
 /* -------------------------
-   顯示班級清單
+   班級清單
 ------------------------- */
 
 function renderClassList() {
@@ -391,16 +436,22 @@ function renderClassList() {
             .map(
                 item => `
 
-                    <div class="student-row">
+                    <div
+                        class="student-row"
+                    >
 
                         <strong>
+
                             ${escapeHtml(
                                 item.school_year
                             )}
+
                             學年度
+
                             ${escapeHtml(
                                 item.class_name
                             )}
+
                         </strong>
 
                     </div>
@@ -412,11 +463,12 @@ function renderClassList() {
 }
 
 
+
 /* -------------------------
-   顯示班級下拉選單
+   班級下拉選單
 ------------------------- */
 
-function renderClassSelects() {
+async function renderClassSelects() {
 
     const studentClass =
         document.getElementById(
@@ -430,22 +482,45 @@ function renderClassSelects() {
         );
 
 
+    const recordClass =
+        document.getElementById(
+            "recordClass"
+        );
+
+
     const oldStudentValue =
         studentClass
-            ? studentClass.value
-            : "";
+            ?
+        studentClass.value
+            :
+        "";
 
 
     const oldAttendanceValue =
         attendanceClass
-            ? attendanceClass.value
-            : "";
+            ?
+        attendanceClass.value
+            :
+        "";
 
 
-    let html =
-        `<option value="">
+    const oldRecordValue =
+        recordClass
+            ?
+        recordClass.value
+            :
+        "";
+
+
+    let html = `
+
+        <option value="">
+
             請選擇班級
-        </option>`;
+
+        </option>
+
+    `;
 
 
     html +=
@@ -454,13 +529,16 @@ function renderClassSelects() {
                 item => `
 
                     <option
-                        value="${item.id}"
+                        value="${escapeAttribute(
+                            item.id
+                        )}"
                     >
 
                         ${escapeHtml(
                             item.school_year
                         )}
                         學年度
+
                         ${escapeHtml(
                             item.class_name
                         )}
@@ -472,68 +550,37 @@ function renderClassSelects() {
             .join("");
 
 
-    if (studentClass) {
+    setClassSelectValue(
 
-        studentClass.innerHTML =
-            html;
+        studentClass,
 
+        html,
 
-        if (
-            classes.some(
-                item =>
-                    item.id ===
-                    oldStudentValue
-            )
-        ) {
+        oldStudentValue
 
-            studentClass.value =
-                oldStudentValue;
-
-        }
-
-        else if (
-            classes.length >
-            0
-        ) {
-
-            studentClass.value =
-                classes[0].id;
-
-        }
-
-    }
+    );
 
 
-    if (attendanceClass) {
+    setClassSelectValue(
 
-        attendanceClass.innerHTML =
-            html;
+        attendanceClass,
+
+        html,
+
+        oldAttendanceValue
+
+    );
 
 
-        if (
-            classes.some(
-                item =>
-                    item.id ===
-                    oldAttendanceValue
-            )
-        ) {
+    setClassSelectValue(
 
-            attendanceClass.value =
-                oldAttendanceValue;
+        recordClass,
 
-        }
+        html,
 
-        else if (
-            classes.length >
-            0
-        ) {
+        oldRecordValue
 
-            attendanceClass.value =
-                classes[0].id;
-
-        }
-
-    }
+    );
 
 
     if (
@@ -541,13 +588,73 @@ function renderClassSelects() {
         0
     ) {
 
-        loadStudents();
+        await loadStudents();
 
-        loadAttendanceStudents();
+        await loadAttendanceStudents();
+
+        await loadRecordStudents();
 
     }
 
 }
+
+
+
+/* -------------------------
+   設定班級選單
+------------------------- */
+
+function setClassSelectValue(
+
+    selectElement,
+
+    html,
+
+    oldValue
+
+) {
+
+    if (!selectElement) {
+
+        return;
+
+    }
+
+
+    selectElement.innerHTML =
+        html;
+
+
+    if (
+
+        classes.some(
+
+            item =>
+
+                item.id ===
+                oldValue
+
+        )
+
+    ) {
+
+        selectElement.value =
+            oldValue;
+
+    }
+
+    else if (
+        classes.length >
+        0
+    ) {
+
+        selectElement.value =
+            classes[0].id;
+
+    }
+
+}
+
 
 
 /* =========================================================
@@ -581,22 +688,30 @@ async function addStudent() {
 
     const classID =
         classSelector
-            ? classSelector.value
-            : "";
+            ?
+        classSelector.value
+            :
+        "";
 
 
     const seatNo =
         seatInput
-            ? Number(
-                seatInput.value
-            )
-            : 0;
+            ?
+        Number(
+            seatInput.value
+        )
+            :
+        0;
 
 
     const studentName =
         nameInput
-            ? nameInput.value.trim()
-            : "";
+            ?
+        nameInput
+            .value
+            .trim()
+            :
+        "";
 
 
     if (!classID) {
@@ -611,12 +726,19 @@ async function addStudent() {
 
 
     if (
-        !seatNo ||
+
+        !Number.isInteger(
+            seatNo
+        ) ||
+
+        seatNo <= 0 ||
+
         !studentName
+
     ) {
 
         alert(
-            "請輸入座號與學生姓名"
+            "請輸入正確的座號與學生姓名"
         );
 
         return;
@@ -659,8 +781,11 @@ async function addStudent() {
     if (error) {
 
         alert(
+
             "新增學生失敗：\n" +
+
             error.message
+
         );
 
         return;
@@ -668,20 +793,12 @@ async function addStudent() {
     }
 
 
-    if (seatInput) {
-
-        seatInput.value =
-            "";
-
-    }
+    seatInput.value =
+        "";
 
 
-    if (nameInput) {
-
-        nameInput.value =
-            "";
-
-    }
+    nameInput.value =
+        "";
 
 
     alert(
@@ -693,7 +810,10 @@ async function addStudent() {
 
     await loadAttendanceStudents();
 
+    await loadRecordStudents();
+
 }
+
 
 
 /* -------------------------
@@ -716,14 +836,20 @@ async function batchImportStudents() {
 
     const classID =
         classSelector
-            ? classSelector.value
-            : "";
+            ?
+        classSelector.value
+            :
+        "";
 
 
     const rawData =
         batchInput
-            ? batchInput.value.trim()
-            : "";
+            ?
+        batchInput
+            .value
+            .trim()
+            :
+        "";
 
 
     if (!classID) {
@@ -779,23 +905,28 @@ async function batchImportStudents() {
         new Set();
 
 
+
     lines.forEach(
         (
             line,
             index
         ) => {
 
+
             /*
              * 跳過標題列
              */
 
             if (
+
                 line.includes(
                     "座號"
                 ) &&
+
                 line.includes(
                     "姓名"
                 )
+
             ) {
 
                 return;
@@ -806,8 +937,9 @@ async function batchImportStudents() {
             let parts;
 
 
+
             /*
-             * Google Sheets 複製通常是 Tab
+             * Google Sheets Tab
              */
 
             if (
@@ -823,8 +955,9 @@ async function batchImportStudents() {
 
             }
 
+
             /*
-             * CSV
+             * 半形逗號
              */
 
             else if (
@@ -839,6 +972,7 @@ async function batchImportStudents() {
                     );
 
             }
+
 
             /*
              * 中文逗號
@@ -856,6 +990,7 @@ async function batchImportStudents() {
                     );
 
             }
+
 
             /*
              * 一般空白
@@ -892,17 +1027,23 @@ async function batchImportStudents() {
 
 
             if (
+
                 !Number.isInteger(
                     seatNo
                 ) ||
+
                 seatNo <= 0 ||
+
                 !name
+
             ) {
 
                 errors.push(
+
                     `第 ${
                         index + 1
                     } 行：${line}`
+
                 );
 
                 return;
@@ -948,13 +1089,16 @@ async function batchImportStudents() {
     );
 
 
+
     if (
         duplicateSeats.size >
         0
     ) {
 
         alert(
+
             "匯入資料中有重複座號：\n" +
+
             Array
                 .from(
                     duplicateSeats
@@ -962,12 +1106,15 @@ async function batchImportStudents() {
                 .join(
                     "、"
                 ) +
+
             "\n\n請先修改後再匯入。"
+
         );
 
         return;
 
     }
+
 
 
     if (
@@ -984,22 +1131,23 @@ async function batchImportStudents() {
     }
 
 
+
     if (
         errors.length >
         0
     ) {
 
-        const message =
-            "以下資料格式無法辨識：\n\n" +
-            errors.join(
-                "\n"
-            ) +
-            "\n\n是否仍要匯入其他正確資料？";
-
-
         const continueImport =
             confirm(
-                message
+
+                "以下資料格式無法辨識：\n\n" +
+
+                errors.join(
+                    "\n"
+                ) +
+
+                "\n\n是否仍要匯入其他正確資料？"
+
             );
 
 
@@ -1014,20 +1162,25 @@ async function batchImportStudents() {
     }
 
 
+
     const classData =
         classes.find(
+
             item =>
+
                 item.id ===
                 classID
+
         );
 
 
     const classText =
         classData
             ?
-            `${classData.school_year}學年度 ${classData.class_name}`
+        `${classData.school_year}學年度 ${classData.class_name}`
             :
-            "目前班級";
+        "目前班級";
+
 
 
     const confirmed =
@@ -1051,6 +1204,7 @@ async function batchImportStudents() {
     }
 
 
+
     const {
         error
     } =
@@ -1072,41 +1226,48 @@ async function batchImportStudents() {
     if (error) {
 
         alert(
+
             "批次匯入失敗：\n" +
+
             error.message
+
         );
+
 
         console.error(
             error
         );
+
 
         return;
 
     }
 
 
+
     alert(
+
         `成功匯入 ${students.length} 位學生`
+
     );
 
 
-    if (batchInput) {
-
-        batchInput.value =
-            "";
-
-    }
+    batchInput.value =
+        "";
 
 
     await loadStudents();
 
     await loadAttendanceStudents();
 
+    await loadRecordStudents();
+
 }
 
 
+
 /* -------------------------
-   讀取學生
+   載入學生
 ------------------------- */
 
 async function loadStudents() {
@@ -1215,8 +1376,10 @@ async function loadStudents() {
                     >
 
                         <strong>
+
                             ${student.seat_no}
                             號
+
                         </strong>
 
                         &nbsp;&nbsp;
@@ -1234,13 +1397,14 @@ async function loadStudents() {
 }
 
 
+
 /* =========================================================
-   點名管理
+   今日點名
 ========================================================= */
 
 
 /* -------------------------
-   讀取點名名單
+   載入點名學生
 ------------------------- */
 
 async function loadAttendanceStudents() {
@@ -1259,20 +1423,25 @@ async function loadAttendanceStudents() {
 
     const classID =
         classSelector
-            ? classSelector.value
-            : "";
+            ?
+        classSelector.value
+            :
+        "";
 
 
     const date =
         dateInput
-            ? dateInput.value
-            : "";
+            ?
+        dateInput.value
+            :
+        "";
 
 
     if (!classID) {
 
         currentAttendance =
             [];
+
 
         renderAttendance();
 
@@ -1281,9 +1450,6 @@ async function loadAttendanceStudents() {
     }
 
 
-    /*
-     * 先抓學生
-     */
 
     const {
         data:
@@ -1315,11 +1481,16 @@ async function loadAttendanceStudents() {
             );
 
 
-    if (studentError) {
+    if (
+        studentError
+    ) {
 
         alert(
+
             "讀取學生失敗：\n" +
+
             studentError.message
+
         );
 
         return;
@@ -1327,12 +1498,12 @@ async function loadAttendanceStudents() {
     }
 
 
-    /*
-     * 先預設全部到校
-     */
 
     currentAttendance =
-        (students || [])
+        (
+            students ||
+            []
+        )
             .map(
                 student => ({
 
@@ -1361,15 +1532,18 @@ async function loadAttendanceStudents() {
             );
 
 
+
     /*
-     * 如果有日期，
-     * 再抓已經儲存過的點名紀錄
+     * 讀取之前已經儲存的紀錄
      */
 
     if (
+
         date &&
+
         currentAttendance.length >
         0
+
     ) {
 
         const studentIDs =
@@ -1408,8 +1582,11 @@ async function loadAttendanceStudents() {
         ) {
 
             console.error(
+
                 "讀取出缺勤紀錄錯誤：",
+
                 attendanceError
+
             );
 
         }
@@ -1489,8 +1666,9 @@ async function loadAttendanceStudents() {
 }
 
 
+
 /* -------------------------
-   顯示點名名單
+   顯示點名學生
 ------------------------- */
 
 function renderAttendance() {
@@ -1516,11 +1694,13 @@ function renderAttendance() {
         container.innerHTML =
             "<p>目前沒有可點名的學生。</p>";
 
+
         renderSummary();
 
         return;
 
     }
+
 
 
     container.innerHTML =
@@ -1547,6 +1727,7 @@ function renderAttendance() {
                         )}
 
                     </div>
+
 
 
                     <div
@@ -1593,64 +1774,101 @@ function renderAttendance() {
                     </div>
 
 
+
                     <div
-                        style="
-                            display:flex;
-                            gap:8px;
-                            flex-wrap:wrap;
-                            margin-top:10px;
-                        "
+                        class="attendance-extra"
                     >
 
-                        <input
-                            type="time"
-                            value="${
-                                student.arrival_time ||
-                                ""
-                            }"
-                            onchange="
-                                updateAttendanceField(
-                                    ${index},
-                                    'arrival_time',
-                                    this.value
-                                )
-                            "
+
+                        <label>
+
+                            到校時間
+
+                            <input
+
+                                type="time"
+
+                                value="${
+                                    escapeAttribute(
+                                        student.arrival_time ||
+                                        ""
+                                    )
+                                }"
+
+                                onchange="
+                                    updateAttendanceField(
+                                        ${index},
+                                        'arrival_time',
+                                        this.value
+                                    )
+                                "
+
+                            >
+
+                        </label>
+
+
+
+                        <label>
+
+                            離校時間
+
+                            <input
+
+                                type="time"
+
+                                value="${
+                                    escapeAttribute(
+                                        student.leave_time ||
+                                        ""
+                                    )
+                                }"
+
+                                onchange="
+                                    updateAttendanceField(
+                                        ${index},
+                                        'leave_time',
+                                        this.value
+                                    )
+                                "
+
+                            >
+
+                        </label>
+
+
+
+                        <label
+                            class="note-field"
                         >
 
+                            備註
 
-                        <input
-                            type="time"
-                            value="${
-                                student.leave_time ||
-                                ""
-                            }"
-                            onchange="
-                                updateAttendanceField(
-                                    ${index},
-                                    'leave_time',
-                                    this.value
-                                )
-                            "
-                        >
+                            <input
 
+                                type="text"
 
-                        <input
-                            type="text"
-                            placeholder="備註"
-                            value="${
-                                escapeAttribute(
-                                    student.note ||
-                                    ""
-                                )
-                            }"
-                            onchange="
-                                updateAttendanceField(
-                                    ${index},
-                                    'note',
-                                    this.value
-                                )
-                            "
-                        >
+                                placeholder="例如：看牙醫、上午請假"
+
+                                value="${
+                                    escapeAttribute(
+                                        student.note ||
+                                        ""
+                                    )
+                                }"
+
+                                onchange="
+                                    updateAttendanceField(
+                                        ${index},
+                                        'note',
+                                        this.value
+                                    )
+                                "
+
+                            >
+
+                        </label>
+
 
                     </div>
 
@@ -1666,13 +1884,17 @@ function renderAttendance() {
 }
 
 
+
 /* -------------------------
-   修改點名狀態
+   更改狀態
 ------------------------- */
 
 function changeStatus(
+
     index,
+
     status
+
 ) {
 
     if (
@@ -1692,8 +1914,9 @@ function changeStatus(
         status;
 
 
+
     /*
-     * 遲到時自動帶目前時間
+     * 遲到自動填現在時間
      */
 
     if (
@@ -1717,8 +1940,9 @@ function changeStatus(
     }
 
 
+
     /*
-     * 早退時自動帶目前時間
+     * 早退自動填現在時間
      */
 
     if (
@@ -1747,14 +1971,19 @@ function changeStatus(
 }
 
 
+
 /* -------------------------
-   修改點名其他欄位
+   修改其他欄位
 ------------------------- */
 
 function updateAttendanceField(
+
     index,
+
     field,
+
     value
+
 ) {
 
     if (
@@ -1776,8 +2005,9 @@ function updateAttendanceField(
 }
 
 
+
 /* -------------------------
-   顯示今日統計
+   點名統計
 ------------------------- */
 
 function renderSummary() {
@@ -1836,21 +2066,19 @@ function renderSummary() {
                 status => `
 
                     <span
-                        style="
-                            display:inline-block;
-                            margin-right:15px;
-                            margin-bottom:10px;
-                        "
+                        class="summary-chip"
                     >
 
                         ${status}：
 
                         <strong>
+
                             ${
                                 result[
                                     status
                                 ]
                             }
+
                         </strong>
 
                     </span>
@@ -1860,6 +2088,7 @@ function renderSummary() {
             .join("");
 
 }
+
 
 
 /* -------------------------
@@ -1876,8 +2105,10 @@ async function saveAttendance() {
 
     const date =
         dateInput
-            ? dateInput.value
-            : "";
+            ?
+        dateInput.value
+            :
+        "";
 
 
     if (!date) {
@@ -1903,6 +2134,7 @@ async function saveAttendance() {
         return;
 
     }
+
 
 
     const rows =
@@ -1939,6 +2171,7 @@ async function saveAttendance() {
             );
 
 
+
     const {
         error
     } =
@@ -1960,8 +2193,11 @@ async function saveAttendance() {
     if (error) {
 
         alert(
+
             "儲存失敗：\n" +
+
             error.message
+
         );
 
 
@@ -1980,22 +2216,1559 @@ async function saveAttendance() {
     );
 
 
-    /*
-     * 儲存後重新讀一次
-     */
-
     await loadAttendanceStudents();
 
 }
 
 
+
 /* =========================================================
-   工具函式
+   紀錄查詢
 ========================================================= */
 
 
 /* -------------------------
-   目前時間
+   載入紀錄查詢學生
+------------------------- */
+
+async function loadRecordStudents() {
+
+    const classSelector =
+        document.getElementById(
+            "recordClass"
+        );
+
+
+    const studentSelector =
+        document.getElementById(
+            "recordStudent"
+        );
+
+
+    if (
+        !classSelector ||
+        !studentSelector
+    ) {
+
+        return;
+
+    }
+
+
+    const classID =
+        classSelector.value;
+
+
+    if (!classID) {
+
+        studentSelector.innerHTML =
+            `
+
+                <option value="">
+
+                    請先選擇班級
+
+                </option>
+
+            `;
+
+        return;
+
+    }
+
+
+    const oldValue =
+        studentSelector.value;
+
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from(
+                "students"
+            )
+            .select(
+                "id, seat_no, name"
+            )
+            .eq(
+                "class_id",
+                classID
+            )
+            .eq(
+                "active",
+                true
+            )
+            .order(
+                "seat_no",
+                {
+                    ascending:
+                        true
+                }
+            );
+
+
+    if (error) {
+
+        console.error(
+
+            "讀取紀錄查詢學生錯誤：",
+
+            error
+
+        );
+
+
+        studentSelector.innerHTML =
+            `
+
+                <option value="">
+
+                    讀取失敗
+
+                </option>
+
+            `;
+
+
+        return;
+
+    }
+
+
+
+    let html =
+        `
+
+            <option value="">
+
+                請選擇學生
+
+            </option>
+
+        `;
+
+
+
+    html +=
+        (
+            data ||
+            []
+        )
+            .map(
+                student => `
+
+                    <option
+                        value="${escapeAttribute(
+                            student.id
+                        )}"
+                    >
+
+                        ${student.seat_no}
+                        號
+
+                        ${escapeHtml(
+                            student.name
+                        )}
+
+                    </option>
+
+                `
+            )
+            .join("");
+
+
+
+    studentSelector.innerHTML =
+        html;
+
+
+
+    if (
+
+        (
+            data ||
+            []
+        ).some(
+
+            student =>
+
+                student.id ===
+                oldValue
+
+        )
+
+    ) {
+
+        studentSelector.value =
+            oldValue;
+
+    }
+
+}
+
+
+
+/* -------------------------
+   查詢某一天
+------------------------- */
+
+async function loadDateRecords() {
+
+    const classSelector =
+        document.getElementById(
+            "recordClass"
+        );
+
+
+    const dateInput =
+        document.getElementById(
+            "recordDate"
+        );
+
+
+    const container =
+        document.getElementById(
+            "dateRecordList"
+        );
+
+
+    const classID =
+        classSelector
+            ?
+        classSelector.value
+            :
+        "";
+
+
+    const date =
+        dateInput
+            ?
+        dateInput.value
+            :
+        "";
+
+
+    if (!classID) {
+
+        alert(
+            "請先選擇班級"
+        );
+
+        return;
+
+    }
+
+
+    if (!date) {
+
+        alert(
+            "請先選擇日期"
+        );
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "<p>讀取中...</p>";
+
+
+
+    const {
+        data:
+            students,
+        error:
+            studentError
+    } =
+        await supabaseClient
+            .from(
+                "students"
+            )
+            .select(
+                "id, seat_no, name"
+            )
+            .eq(
+                "class_id",
+                classID
+            )
+            .eq(
+                "active",
+                true
+            )
+            .order(
+                "seat_no",
+                {
+                    ascending:
+                        true
+                }
+            );
+
+
+    if (
+        studentError
+    ) {
+
+        container.innerHTML =
+
+            `<p>
+                讀取學生失敗：
+                ${escapeHtml(
+                    studentError.message
+                )}
+            </p>`;
+
+        return;
+
+    }
+
+
+
+    if (
+        !students ||
+        students.length ===
+        0
+    ) {
+
+        container.innerHTML =
+            "<p>這個班級目前沒有學生。</p>";
+
+        return;
+
+    }
+
+
+
+    const studentIDs =
+        students.map(
+            student =>
+                student.id
+        );
+
+
+
+    const {
+        data:
+            records,
+        error:
+            recordError
+    } =
+        await supabaseClient
+            .from(
+                "attendance"
+            )
+            .select(
+
+                "student_id, attendance_date, status, arrival_time, leave_time, note"
+
+            )
+            .eq(
+                "attendance_date",
+                date
+            )
+            .in(
+                "student_id",
+                studentIDs
+            );
+
+
+    if (
+        recordError
+    ) {
+
+        container.innerHTML =
+
+            `<p>
+                讀取紀錄失敗：
+                ${escapeHtml(
+                    recordError.message
+                )}
+            </p>`;
+
+        return;
+
+    }
+
+
+
+    const recordMap =
+        {};
+
+
+    (
+        records ||
+        []
+    )
+        .forEach(
+            record => {
+
+                recordMap[
+                    record.student_id
+                ] =
+                    record;
+
+            }
+        );
+
+
+
+    const rows =
+        students.map(
+            student => {
+
+                const record =
+                    recordMap[
+                        student.id
+                    ];
+
+
+                return {
+
+                    seat_no:
+                        student.seat_no,
+
+                    name:
+                        student.name,
+
+                    status:
+                        record
+                            ?
+                        record.status
+                            :
+                        "未儲存",
+
+                    arrival_time:
+                        record
+                            ?
+                        (
+                            record.arrival_time ||
+                            ""
+                        )
+                            :
+                        "",
+
+                    leave_time:
+                        record
+                            ?
+                        (
+                            record.leave_time ||
+                            ""
+                        )
+                            :
+                        "",
+
+                    note:
+                        record
+                            ?
+                        (
+                            record.note ||
+                            ""
+                        )
+                            :
+                        ""
+
+                };
+
+            }
+        );
+
+
+
+    const savedCount =
+        rows.filter(
+
+            row =>
+
+                row.status !==
+                "未儲存"
+
+        ).length;
+
+
+
+    container.innerHTML =
+        `
+
+            <p>
+
+                日期：
+
+                <strong>
+
+                    ${escapeHtml(
+                        formatDateTW(
+                            date
+                        )
+                    )}
+
+                </strong>
+
+                &nbsp;&nbsp;
+
+                已有紀錄：
+
+                <strong>
+
+                    ${savedCount}
+
+                </strong>
+
+                /
+
+                ${rows.length}
+
+                人
+
+            </p>
+
+
+
+            <div
+                class="table-wrapper"
+            >
+
+                <table
+                    class="record-table"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                座號
+                            </th>
+
+                            <th>
+                                姓名
+                            </th>
+
+                            <th>
+                                狀態
+                            </th>
+
+                            <th>
+                                到校時間
+                            </th>
+
+                            <th>
+                                離校時間
+                            </th>
+
+                            <th>
+                                備註
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${rows
+                            .map(
+                                row => `
+
+                                    <tr>
+
+                                        <td>
+
+                                            ${row.seat_no}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                row.name
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                row.status
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                shortTime(
+                                                    row.arrival_time
+                                                )
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                shortTime(
+                                                    row.leave_time
+                                                )
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                row.note
+                                            )}
+
+                                        </td>
+
+                                    </tr>
+
+                                `
+                            )
+                            .join("")
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+}
+
+
+
+/* -------------------------
+   個別學生紀錄
+------------------------- */
+
+async function loadStudentHistory() {
+
+    const studentSelector =
+        document.getElementById(
+            "recordStudent"
+        );
+
+
+    const container =
+        document.getElementById(
+            "studentHistoryList"
+        );
+
+
+    const studentID =
+        studentSelector
+            ?
+        studentSelector.value
+            :
+        "";
+
+
+    if (!studentID) {
+
+        alert(
+            "請先選擇學生"
+        );
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "<p>讀取中...</p>";
+
+
+
+    const selectedOption =
+        studentSelector.options[
+            studentSelector.selectedIndex
+        ];
+
+
+    const studentText =
+        selectedOption
+            ?
+        selectedOption
+            .textContent
+            .trim()
+            :
+        "學生";
+
+
+
+    const {
+        data,
+        error
+    } =
+        await supabaseClient
+            .from(
+                "attendance"
+            )
+            .select(
+
+                "attendance_date, status, arrival_time, leave_time, note"
+
+            )
+            .eq(
+                "student_id",
+                studentID
+            )
+            .order(
+                "attendance_date",
+                {
+                    ascending:
+                        false
+                }
+            );
+
+
+    if (error) {
+
+        container.innerHTML =
+
+            `<p>
+                讀取學生紀錄失敗：
+                ${escapeHtml(
+                    error.message
+                )}
+            </p>`;
+
+        return;
+
+    }
+
+
+
+    const records =
+        data || [];
+
+
+
+    if (
+        records.length ===
+        0
+    ) {
+
+        container.innerHTML =
+
+            `<p>
+                ${escapeHtml(
+                    studentText
+                )}
+                目前沒有出缺勤紀錄。
+            </p>`;
+
+        return;
+
+    }
+
+
+
+    const counts =
+        {};
+
+
+    statuses.forEach(
+        status => {
+
+            counts[
+                status
+            ] = 0;
+
+        }
+    );
+
+
+
+    records.forEach(
+        record => {
+
+            if (
+                counts[
+                    record.status
+                ] !==
+                undefined
+            ) {
+
+                counts[
+                    record.status
+                ]++;
+
+            }
+
+        }
+    );
+
+
+
+    container.innerHTML =
+        `
+
+            <h4>
+
+                ${escapeHtml(
+                    studentText
+                )}
+
+            </h4>
+
+
+
+            <div
+                class="summary-block"
+            >
+
+                ${statuses
+                    .map(
+                        status => `
+
+                            <span
+                                class="summary-chip"
+                            >
+
+                                ${status}：
+
+                                <strong>
+
+                                    ${
+                                        counts[
+                                            status
+                                        ]
+                                    }
+
+                                </strong>
+
+                            </span>
+
+                        `
+                    )
+                    .join("")
+                }
+
+            </div>
+
+
+
+            <div
+                class="table-wrapper"
+            >
+
+                <table
+                    class="record-table"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                日期
+                            </th>
+
+                            <th>
+                                狀態
+                            </th>
+
+                            <th>
+                                到校時間
+                            </th>
+
+                            <th>
+                                離校時間
+                            </th>
+
+                            <th>
+                                備註
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${records
+                            .map(
+                                record => `
+
+                                    <tr>
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                formatDateTW(
+                                                    record.attendance_date
+                                                )
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                record.status
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                shortTime(
+                                                    record.arrival_time
+                                                )
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                shortTime(
+                                                    record.leave_time
+                                                )
+                                            )}
+
+                                        </td>
+
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                record.note ||
+                                                ""
+                                            )}
+
+                                        </td>
+
+                                    </tr>
+
+                                `
+                            )
+                            .join("")
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+}
+
+
+
+/* -------------------------
+   班級統計
+------------------------- */
+
+async function loadClassSummary() {
+
+    const classSelector =
+        document.getElementById(
+            "recordClass"
+        );
+
+
+    const container =
+        document.getElementById(
+            "classSummary"
+        );
+
+
+    const classID =
+        classSelector
+            ?
+        classSelector.value
+            :
+        "";
+
+
+    if (!classID) {
+
+        alert(
+            "請先選擇班級"
+        );
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "<p>統計中...</p>";
+
+
+
+    const {
+        data:
+            students,
+        error:
+            studentError
+    } =
+        await supabaseClient
+            .from(
+                "students"
+            )
+            .select(
+                "id, seat_no, name"
+            )
+            .eq(
+                "class_id",
+                classID
+            )
+            .eq(
+                "active",
+                true
+            )
+            .order(
+                "seat_no",
+                {
+                    ascending:
+                        true
+                }
+            );
+
+
+    if (
+        studentError
+    ) {
+
+        container.innerHTML =
+
+            `<p>
+                讀取學生失敗：
+                ${escapeHtml(
+                    studentError.message
+                )}
+            </p>`;
+
+        return;
+
+    }
+
+
+
+    if (
+        !students ||
+        students.length ===
+        0
+    ) {
+
+        container.innerHTML =
+            "<p>這個班級目前沒有學生。</p>";
+
+        return;
+
+    }
+
+
+
+    let records;
+
+
+
+    try {
+
+        records =
+            await fetchAllAttendanceForStudents(
+
+                students.map(
+                    student =>
+                        student.id
+                )
+
+            );
+
+    }
+
+    catch (
+        error
+    ) {
+
+        container.innerHTML =
+
+            `<p>
+                讀取統計資料失敗：
+                ${escapeHtml(
+                    error.message
+                )}
+            </p>`;
+
+        return;
+
+    }
+
+
+
+    const studentMap =
+        {};
+
+
+    students.forEach(
+        student => {
+
+            const counts =
+                {};
+
+
+            statuses.forEach(
+                status => {
+
+                    counts[
+                        status
+                    ] = 0;
+
+                }
+            );
+
+
+            studentMap[
+                student.id
+            ] = {
+
+                seat_no:
+                    student.seat_no,
+
+                name:
+                    student.name,
+
+                counts:
+                    counts,
+
+                total:
+                    0
+
+            };
+
+        }
+    );
+
+
+
+    const classCounts =
+        {};
+
+
+    statuses.forEach(
+        status => {
+
+            classCounts[
+                status
+            ] = 0;
+
+        }
+    );
+
+
+
+    records.forEach(
+        record => {
+
+            const item =
+                studentMap[
+                    record.student_id
+                ];
+
+
+            if (!item) {
+
+                return;
+
+            }
+
+
+            if (
+                item.counts[
+                    record.status
+                ] !==
+                undefined
+            ) {
+
+                item.counts[
+                    record.status
+                ]++;
+
+
+                classCounts[
+                    record.status
+                ]++;
+
+            }
+
+
+            item.total++;
+
+        }
+    );
+
+
+
+    const summaryRows =
+        students.map(
+            student => {
+
+                const item =
+                    studentMap[
+                        student.id
+                    ];
+
+
+                const presentLike =
+
+                    item.counts[
+                        "到校"
+                    ] +
+
+                    item.counts[
+                        "遲到"
+                    ] +
+
+                    item.counts[
+                        "早退"
+                    ];
+
+
+                const attendanceRate =
+
+                    item.total >
+                    0
+
+                        ?
+
+                    Math.round(
+
+                        (
+                            presentLike /
+                            item.total
+                        ) *
+
+                        1000
+
+                    ) /
+
+                    10
+
+                        :
+
+                    0;
+
+
+                return {
+
+                    ...item,
+
+                    attendanceRate:
+                        attendanceRate
+
+                };
+
+            }
+        );
+
+
+
+    container.innerHTML =
+        `
+
+            <div
+                class="summary-block"
+            >
+
+                ${statuses
+                    .map(
+                        status => `
+
+                            <span
+                                class="summary-chip"
+                            >
+
+                                ${status}：
+
+                                <strong>
+
+                                    ${
+                                        classCounts[
+                                            status
+                                        ]
+                                    }
+
+                                </strong>
+
+                            </span>
+
+                        `
+                    )
+                    .join("")
+                }
+
+            </div>
+
+
+
+            <div
+                class="table-wrapper"
+            >
+
+                <table
+                    class="record-table"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                座號
+                            </th>
+
+                            <th>
+                                姓名
+                            </th>
+
+                            <th>
+                                到校
+                            </th>
+
+                            <th>
+                                遲到
+                            </th>
+
+                            <th>
+                                病假
+                            </th>
+
+                            <th>
+                                事假
+                            </th>
+
+                            <th>
+                                公假
+                            </th>
+
+                            <th>
+                                曠課
+                            </th>
+
+                            <th>
+                                早退
+                            </th>
+
+                            <th>
+                                紀錄日數
+                            </th>
+
+                            <th>
+                                出席率
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        ${summaryRows
+                            .map(
+                                item => `
+
+                                    <tr>
+
+                                        <td>
+                                            ${item.seat_no}
+                                        </td>
+
+                                        <td>
+
+                                            ${escapeHtml(
+                                                item.name
+                                            )}
+
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["到校"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["遲到"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["病假"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["事假"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["公假"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["曠課"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.counts["早退"]}
+                                        </td>
+
+                                        <td>
+                                            ${item.total}
+                                        </td>
+
+                                        <td>
+
+                                            ${item.attendanceRate}%
+
+                                        </td>
+
+                                    </tr>
+
+                                `
+                            )
+                            .join("")
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        `;
+
+}
+
+
+
+/* -------------------------
+   大量讀取紀錄
+------------------------- */
+
+async function fetchAllAttendanceForStudents(
+
+    studentIDs
+
+) {
+
+    const pageSize =
+        1000;
+
+
+    let from =
+        0;
+
+
+    let allRecords =
+        [];
+
+
+    while (
+        true
+    ) {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from(
+                    "attendance"
+                )
+                .select(
+
+                    "id, student_id, attendance_date, status, arrival_time, leave_time, note"
+
+                )
+                .in(
+                    "student_id",
+                    studentIDs
+                )
+                .order(
+                    "id",
+                    {
+                        ascending:
+                            true
+                    }
+                )
+                .range(
+
+                    from,
+
+                    from +
+                    pageSize -
+                    1
+
+                );
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        const batch =
+            data || [];
+
+
+        allRecords =
+            allRecords.concat(
+                batch
+            );
+
+
+        if (
+            batch.length <
+            pageSize
+        ) {
+
+            break;
+
+        }
+
+
+        from +=
+            pageSize;
+
+    }
+
+
+    return allRecords;
+
+}
+
+
+
+/* =========================================================
+   工具
+========================================================= */
+
+
+/* -------------------------
+   現在時間
 ------------------------- */
 
 function getCurrentTime() {
@@ -2023,14 +3796,88 @@ function getCurrentTime() {
 
 
     return (
+
         `${hour}:${minute}`
+
     );
 
 }
 
 
+
 /* -------------------------
-   HTML 安全處理
+   時間只顯示 HH:mm
+------------------------- */
+
+function shortTime(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    return String(
+        value
+    ).slice(
+        0,
+        5
+    );
+
+}
+
+
+
+/* -------------------------
+   日期顯示
+------------------------- */
+
+function formatDateTW(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+
+    const parts =
+        String(
+            value
+        ).split(
+            "-"
+        );
+
+
+    if (
+        parts.length !==
+        3
+    ) {
+
+        return String(
+            value
+        );
+
+    }
+
+
+    return (
+
+        `${parts[0]}/${parts[1]}/${parts[2]}`
+
+    );
+
+}
+
+
+
+/* -------------------------
+   防止 HTML 特殊字元
 ------------------------- */
 
 function escapeHtml(
@@ -2038,7 +3885,8 @@ function escapeHtml(
 ) {
 
     return String(
-        value ?? ""
+        value ??
+        ""
     )
         .replace(
             /&/g,
@@ -2064,8 +3912,9 @@ function escapeHtml(
 }
 
 
+
 /* -------------------------
-   HTML attribute 安全處理
+   HTML attribute 安全
 ------------------------- */
 
 function escapeAttribute(
