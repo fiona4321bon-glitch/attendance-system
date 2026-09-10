@@ -202,7 +202,31 @@
             <div class="card">
 
                 <h3>新增學生</h3>
+<div class="card">
 
+    <h3>批次匯入學生</h3>
+
+    <p>
+        可直接從 Google 試算表複製「座號、姓名」兩欄後貼上。
+    </p>
+
+    <textarea
+        id="batchStudentData"
+        rows="10"
+        style="width:100%; padding:12px;"
+        placeholder="例如：
+1	王小明
+2	李小華
+3	陳小美">
+    </textarea>
+
+    <br><br>
+
+    <button onclick="batchImportStudents()">
+        批次匯入學生
+    </button>
+
+</div>
                 <input
                     type="number"
                     id="seatNo"
